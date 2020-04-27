@@ -36,10 +36,14 @@ namespace Web
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
             services.AddDistributedMemoryCache();//added
+            services.AddDistributedMemoryCache();
+
             services.AddSession(options =>
             {
-                options.IdleTimeout = TimeSpan.FromMinutes(30);
-            });  //added
+                options.IdleTimeout = TimeSpan.FromMinutes(10);
+                options.Cookie.HttpOnly = true;
+                options.Cookie.IsEssential = true;
+            });//added
 
             services.AddControllersWithViews();
             services.AddRazorPages();
@@ -63,7 +67,7 @@ namespace Web
             app.UseSession();//added
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-
+            app.UseCookiePolicy();//added
             app.UseRouting();
 
             app.UseAuthentication();

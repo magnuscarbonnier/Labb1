@@ -35,7 +35,7 @@
                     @item.Price.ToString("C");
                     @if (User.Identity.IsAuthenticated)
                     {
-                        <span class="float-right">@Html.ActionLink("Lägg till i varukorg", "AddToCart", "Products", new { id = item.Id }, new { @class = "btn btn-secondary" })</span>
+                        <span class="float-right">@Html.ActionLink("Lägg till i varukorg", "AddToCart", "Product", new { Id = item.Id }, new { @class = "btn btn-secondary" })</span>
                     }
                 </p>
             </div>

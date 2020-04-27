@@ -27,19 +27,25 @@ namespace Web.Controllers
             return View(vm);
         }
 
-            public IActionResult AddToCart(ProductViewModel vm)
+        public IActionResult AddToCart(Guid Id)
+        {
+            string currentCart = HttpContext.Session.GetString(Lib.SessionKeyCart);
+            string cartContent = "";
+
+            if (currentCart != null)
             {
-                //HttpContext.Session.SetString("Name", vm.Namn);
-                return RedirectToAction("Index");
+                cartContent = currentCart;
+                cartContent += "," + Id;
             }
+            else
+            {
+                cartContent += Id;
+            }
+
+            HttpContext.Session.SetString(Lib.SessionKeyCart, cartContent);
+
+            return RedirectToAction("index");
         }
     }
-    //public IActionResult Index()
-//        {
-//            vm.Namn =  HttpContext.Session.GetString("Name");
-//                return View(vm);
-//}
-            
-            
-//            return View(vm);
-//        }
+}
+ 
