@@ -8,18 +8,9 @@ namespace Web.Models
 {
     public class Item
     {
-        public Guid Id { get; set; }
-
-        [Display(Name = "Namn")]
-        public string Name { get; set; }
-
-        [Display(Name = "Beskrivning")]
-        public string Description { get; set; }
-
-        [Display(Name = "Pris")]
-        public decimal Price { get; set; }
-
-        [Display(Name = "Bildsökväg")]
-        public string ImgSrc { get; set; }
+        public Product Product { get; set; }
+        
+        [Display(Name = "Antal")]
+        public int Quantity { get; set; }
     }
 }

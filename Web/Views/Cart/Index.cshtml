@@ -1,0 +1,30 @@
+﻿@model Web.ViewModels.CartViewModel
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<form method="post" asp-action="PlaceOrder">
+
+    @foreach (var item in Model.CartItems)
+    {
+        <div>
+            @Html.DisplayFor(modelItem => item.Product.Name)
+
+            @Html.DisplayFor(modelItem => item.Product.Price)
+            @Html.DisplayFor(modelItem => item.Quantity)
+            @Html.ActionLink("Delete", "Delete")
+        </div>
+    }
+
+
+
+
+
+    <div>
+        Total: @Model.TotalPrice.ToString("C")
+        <input type="submit" value="Order" />
+    </div>
+    @Html.HiddenFor(modelItem => Model.TotalPrice)
+</form>
