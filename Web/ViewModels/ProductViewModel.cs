@@ -8,7 +8,6 @@ namespace Web.ViewModels
 {
     public class ProductViewModel
     {
-        public string Namn { get; set; }
         public IEnumerable<Product> Products { get; set; }
     }
 }
