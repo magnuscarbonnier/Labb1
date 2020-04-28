@@ -1,7 +1,11 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Web.Models;
+using Web.Services;
 
 namespace Web
 {
@@ -10,6 +14,8 @@ namespace Web
         public const string SessionKeyCart = "_ShoppingCart";
         public const string SessionKeyTotalPrice = "_ShoppingTotalPrice";
         public const string SessionKeyOrder = "_ShoppingOrder";
-        public enum Status { Beställd=0, Bekräftad=1, Packas=2, Skickad=3, Avbeställd=4}
+        public const string SessionKeyUserId = "_UserId";
+        public enum Status { Beställd = 0, Bekräftad = 1, Packas = 2, Skickad = 3, Avbeställd = 4 }
     }
 }
+

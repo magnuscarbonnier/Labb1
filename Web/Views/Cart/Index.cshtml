@@ -3,28 +3,31 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
 
-<form method="post" asp-action="PlaceOrder">
+
+<h1>Kundvagn</h1>
+
+
 
     @foreach (var item in Model.CartItems)
     {
-        <div>
-            @Html.DisplayFor(modelItem => item.Product.Name)
-
-            @Html.DisplayFor(modelItem => item.Product.Price)
-            @Html.DisplayFor(modelItem => item.Quantity)
-            @Html.ActionLink("Delete", "Delete")
+        <div class="card mb-3" style="max-width: 540px;max-height=150px;">
+            <div class="row no-gutters">
+                <div class="col-md-4">
+                    <img src="@item.Product.ImgSrc" class="card-img" alt="@item.Product.Name">
+                </div>
+                <div class="col-md-8">
+                    <div class="card-body">
+                        <h5 class="card-title">@item.Product.Name</h5>
+                        <p class="card-text">@item.Product.Description</p>
+                        <p class="card-text">Antal: @item.Quantity</p>
+                        
+                        <p class="card-text"><small class="text-muted">Pris: @item.Product.Price</small></p>
+                    </div>
+                </div>
+            </div>
         </div>
     }
-
-
-
-
-
-    <div>
-        Total: @Model.TotalPrice.ToString("C")
-        <input type="submit" value="Order" />
-    </div>
-    @Html.HiddenFor(modelItem => Model.TotalPrice)
+<form method="post" asp-action="PlaceOrder">
+    <input class="btn btn-secondary" type="submit" value="Beställ" />
 </form>

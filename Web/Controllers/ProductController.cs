@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Web.Models;
 using Web.Services;
@@ -14,10 +16,12 @@ namespace Web.Controllers
     public class ProductController : Controller
     {
         private readonly IProductService _productService;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public ProductController(IProductService productService)
+        public ProductController(IProductService productService, UserManager<ApplicationUser> userManager)
         {
             _productService = productService;
+            _userManager = userManager;
         }
 
         public IActionResult Index()
@@ -30,12 +34,20 @@ namespace Web.Controllers
 
         public IActionResult AddToCart(Guid Id)
         {
+            var sessionUser = HttpContext.Session.Get<string>(Lib.SessionKeyUserId);
+            var userid = _userManager.GetUserId(User);
+            if(sessionUser!=userid)
+            {
+                HttpContext.Session.Clear();
+                HttpContext.Session.Set<string>(Lib.SessionKeyUserId,userid);
+            }
+
             var product = _productService.GetById(Id);
             if(product == null)
             {
                 return RedirectToAction("index");
             }
-
+            
             var items=HttpContext.Session.Get<List<Item>>(Lib.SessionKeyCart);
 
             if (items != null)
@@ -58,6 +70,7 @@ namespace Web.Controllers
             HttpContext.Session.Set<decimal>(Lib.SessionKeyTotalPrice, totalPrice);
             HttpContext.Session.Set<List<Item>>(Lib.SessionKeyCart, items);
 
+            TempData["Success"] = $"{product.Name} tillagd i varukorgen.";
             return RedirectToAction("index");
         }
     }

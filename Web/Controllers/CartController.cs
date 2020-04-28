@@ -8,6 +8,7 @@ using Web.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Web.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Web.Controllers
 {
@@ -23,18 +24,42 @@ namespace Web.Controllers
         }
 
         public IActionResult Index()
+        
         {
+            var sessionUser = HttpContext.Session.Get<string>(Lib.SessionKeyUserId);
+            var userid = _userManager.GetUserId(User);
+            if (sessionUser != userid)
+            {
+                HttpContext.Session.Clear();
+                HttpContext.Session.Set<string>(Lib.SessionKeyUserId, userid);
+            }
+
             CartViewModel vm = new CartViewModel();
             var currentCart = HttpContext.Session.Get<List<Item>>(Lib.SessionKeyCart);
+            if (currentCart == null)
+                currentCart = new List<Item>();
             vm.CartItems = currentCart;
             vm.TotalPrice = vm.CartItems.Sum(x => x.Product.Price * x.Quantity);
             return View(vm);
         }
+
         [HttpPost]
         public async Task<IActionResult> PlaceOrder()
         {
-            //OrderViewModel vm = new OrderViewModel();
+            var sessionUser = HttpContext.Session.Get<string>(Lib.SessionKeyUserId);
+            var userid = _userManager.GetUserId(User);
+            if (sessionUser != userid)
+            {
+                HttpContext.Session.Clear();
+                HttpContext.Session.Set<string>(Lib.SessionKeyUserId, userid);
+            }
+
             var cart = HttpContext.Session.Get<List<Item>>(Lib.SessionKeyCart);
+            if(cart==null)
+            {
+                TempData["Error"] = "Lägg till varor i kundvagnen och försök igen...";
+                return RedirectToAction("Index","Home");
+            }
             var total = HttpContext.Session.Get<decimal>(Lib.SessionKeyTotalPrice);
             var user = await _userManager.GetUserAsync(User);
             Order order = new Order 
@@ -52,11 +77,9 @@ namespace Web.Controllers
                 OrderDate=DateTime.Now, 
                 Status=Lib.Status.Beställd
             };
-            //vm.User = user;
-            //vm.Order = order;
+
             HttpContext.Session.Set<Order>(Lib.SessionKeyOrder, order);
             return RedirectToAction("Index", "Order");
         }
-
     }
 }
