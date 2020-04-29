@@ -42,11 +42,18 @@ else
 
                         <td>@item.Product.Name</td>
                         <td>@item.Product.Description</td>
-                        <td>@item.Quantity</td>
+                        <td>
+                            @item.Quantity <a href="@Url.Action("Increase","Cart",new { Id = item.Product.Id })"><i class="fas fa-plus-circle text-white"> </i></a>
+                                                <a href="@Url.Action("Decrease","Cart",new { Id = item.Product.Id })"><i class="fas fa-minus-circle text-white"></i></a>
+                                            </td>
                         <td>@item.Product.Price.ToString("C")</td>
-                        <td></td>
+                        <td>
+                            
+                            <a href="@Url.Action("Remove","Cart",new { Id = item.Product.Id })"><i class="fas fa-trash text-danger"></i></a>
+                        </td>
                     </tr>
-                }
+                    }
+                
             </tbody>
         </table>
         <p class="text-center font-weight-bold">Totalt: @Model.TotalPrice.ToString("C")</p>

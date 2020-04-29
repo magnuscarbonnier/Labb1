@@ -94,7 +94,9 @@
                             @Html.DisplayFor(modelItem => item.Product.Price)
                         </td>
                         <td>
-                            @Html.DisplayFor(modelItem => item.Quantity)
+                            @Html.DisplayFor(modelItem => item.Quantity)<a href="@Url.Action("Increase","Order",new { Id = item.Product.Id })"><i class="fas fa-plus-circle text-white"> </i></a>
+                            <a href="@Url.Action("Decrease","Order",new { Id = item.Product.Id })"><i class="fas fa-minus-circle text-white"></i></a>
+                            <a href="@Url.Action("Remove","Order",new { Id = item.Product.Id })"><i class="fas fa-trash text-danger"></i></a>
                         </td>
                     </tr>
                 }
