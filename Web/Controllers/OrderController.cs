@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Web.Models;
@@ -21,11 +22,11 @@ namespace Web.Controllers
             _userManager = userManager;
         }
         public IActionResult Index()
-        
         {
             var sessionUser = HttpContext.Session.Get<string>(Lib.SessionKeyUserId);
             var userid = _userManager.GetUserId(User);
             var order = HttpContext.Session.Get<Order>(Lib.SessionKeyOrder);
+
             if(!order.OrderItems.Any())
             {
                 TempData["Error"]="Du har inga varor i din order. Lägg till varor och försök igen";
@@ -45,6 +46,35 @@ namespace Web.Controllers
             }
 
             return View(order);
+        }
+        public IActionResult Details(Order order)
+        {
+            var sessionUser = HttpContext.Session.Get<string>(Lib.SessionKeyUserId);
+            
+            if (sessionUser==order.UserId)
+            {
+                return View(order);
+            }
+            return RedirectToAction("Index", "Home");
+        }
+        [Authorize]
+        public IActionResult SaveOrder(Order order)
+        {
+            var sessionUser = HttpContext.Session.Get<string>(Lib.SessionKeyUserId);
+            var cart = HttpContext.Session.Get<List<Item>>(Lib.SessionKeyCart);
+           
+            if (order.UserId == sessionUser)
+            {
+                order.OrderItems = cart;
+                //Spara order till databasen istället
+                HttpContext.Session.Set<Order>(Lib.SessionKeyOrder, order);
+                //Töm kundvagn
+                HttpContext.Session.Remove(Lib.SessionKeyCart);
+                //Töm order
+                HttpContext.Session.Remove(Lib.SessionKeyOrder);
+                return RedirectToAction("Details", "Order", order);
+            }
+            return RedirectToAction("Index", "Home");
         }
         public IActionResult Remove(Guid Id)
         {
