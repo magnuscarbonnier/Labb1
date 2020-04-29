@@ -6,11 +6,25 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Data\Migrations\20200427112311_user_roles.cs" />
+    <Compile Remove="Data\Migrations\20200427112311_user_roles.Designer.cs" />
+    <Compile Remove="Data\Migrations\20200427113115_User_properties.cs" />
+    <Compile Remove="Data\Migrations\20200427113115_User_properties.Designer.cs" />
+    <Compile Remove="Data\Migrations\20200427113242_User_properties.cs" />
+    <Compile Remove="Data\Migrations\20200427113242_User_properties.Designer.cs" />
+    <Compile Remove="Data\Migrations\20200427114638_User_propertiesf.cs" />
+    <Compile Remove="Data\Migrations\20200427114638_User_propertiesf.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Font.Awesome" Version="5.13.0" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="3.1.3" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="3.1.3" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="3.1.3" />
+    <PackageReference Include="Microsoft.AspNetCore.Session" Version="2.2.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.3" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.3" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.2" />
   </ItemGroup>
 
 </Project>

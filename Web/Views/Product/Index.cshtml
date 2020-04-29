@@ -1,0 +1,45 @@
+﻿@model Web.ViewModels.ProductViewModel
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+@*<h1>Index</h1>
+
+
+<h1>Sessions</h1>
+<form asp-action="SaveName" method="post">
+    Your name:
+    @Html.DisplayFor(x => x.Namn)
+    @Html.EditorFor(x => x.Namn)
+    <input type="submit" value="Save" />
+</form>*@
+
+
+<h1>Products</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+
+<div class="row d-flex flex-row justify-content-around flex-wrap">
+    @foreach (var item in Model.Products)
+    {
+        @Html.HiddenFor(x => item.Id)
+        <div class="card flex-grow-0 flex-shrink-1 m-2" style="flex-basis: 300px">
+            <img src="@item.ImgSrc" alt="@item.Name" class="card-img-top" />
+            <div class="card-body">
+                <h3 class="card-title">@item.Name</h3>
+                <p class="card-text">@item.Description</p>
+                <p>
+                    @item.Price.ToString("C");
+                </p>
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <p>@Html.ActionLink("Lägg till i varukorg", "AddToCart", "Product", new { Id = item.Id }, new { @class = "btn btn-secondary" })</p>
+                    }
+                
+            </div>
+        </div>
+    }
+</div>
