@@ -7,29 +7,53 @@
 
 <h1>Kundvagn</h1>
 
-
-<div class="row">
-    <h3 class="col"></h3>
-    <h3 class="col">Namn</h3>
-    <h3 class="col">Antal</h3>
-    <h3 class="col">Pris</h3>
-</div>
-    <hr />
-@foreach (var item in Model.CartItems)
+@if (!Model.CartItems.Any() && !User.Identity.IsAuthenticated)
 {
-    <div class="row">
-        <div class="col"><img src="@item.Product.ImgSrc" class="img-thumbnail" style="max-height:100px;max-width:100px;min-height=100px;min-width:100px;" alt="@item.Product.Name"></div>
-
-        <h5 class="col ">@item.Product.Name</h5>
-        <p class="col">@item.Quantity</p>
-
-        <p class="col"><small class="text-muted">@item.Product.Price</small></p>
+    <div>
+        <p>Kundvagnen är tom. Logga in för att börja handla.</p>
     </div>
+    <a class="btn btn-outline-info" asp-area="Identity" asp-page="/Account/Login">Logga in</a>
+}
+else if (!Model.CartItems.Any() && User.Identity.IsAuthenticated)
+{
+<div>
+    <p>Kundvagnen är tom. Lägg till varor!</p>
+    <a class="btn btn-secondary" asp-area="" asp-controller="Product" asp-action="Index">Produkter</a>
+</div>
+}
+else
+{
+
+    <div class="col-sm-12 col-md-7">
+        <table class="table table-striped table-dark">
+            <thead>
+                <tr>
+                    <th>Namn</th>
+                    <th>Beskrivning</th>
+                    <th>Antal</th>
+                    <th>Pris</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.CartItems)
+                {
+                    <tr>
+
+                        <td>@item.Product.Name</td>
+                        <td>@item.Product.Description</td>
+                        <td>@item.Quantity</td>
+                        <td>@item.Product.Price.ToString("C")</td>
+                        <td></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <p class="text-center font-weight-bold">Totalt: @Model.TotalPrice.ToString("C")</p>
+    </div>
+
+        <form method="post" asp-action="PlaceOrder">
+            <input class="btn btn-secondary" type="submit" value="Beställ" />
+        </form>
 }
 
-@if (User.Identity.IsAuthenticated && Model.CartItems.Any())
-{
-    <form method="post" asp-action="PlaceOrder">
-        <input class="btn btn-secondary" type="submit" value="Beställ" />
-    </form>
-}
