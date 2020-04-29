@@ -33,11 +33,12 @@
                 <p class="card-text">@item.Description</p>
                 <p>
                     @item.Price.ToString("C");
+                </p>
                     @if (User.Identity.IsAuthenticated)
                     {
-                        <span class="float-right">@Html.ActionLink("Lägg till i varukorg", "AddToCart", "Product", new { Id = item.Id }, new { @class = "btn btn-secondary" })</span>
+                        <p>@Html.ActionLink("Lägg till i varukorg", "AddToCart", "Product", new { Id = item.Id }, new { @class = "btn btn-secondary" })</p>
                     }
-                </p>
+                
             </div>
         </div>
     }

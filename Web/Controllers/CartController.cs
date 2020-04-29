@@ -24,7 +24,6 @@ namespace Web.Controllers
         }
 
         public IActionResult Index()
-        
         {
             var sessionUser = HttpContext.Session.Get<string>(Lib.SessionKeyUserId);
             var userid = _userManager.GetUserId(User);
@@ -80,6 +79,119 @@ namespace Web.Controllers
 
             HttpContext.Session.Set<Order>(Lib.SessionKeyOrder, order);
             return RedirectToAction("Index", "Order");
+        }
+
+        public IActionResult Remove(Guid Id)
+        {
+            var sessionUser = HttpContext.Session.Get<string>(Lib.SessionKeyUserId);
+            var userid = _userManager.GetUserId(User);
+            if (sessionUser != userid)
+            {
+                HttpContext.Session.Clear();
+                HttpContext.Session.Set<string>(Lib.SessionKeyUserId, userid);
+            }
+
+            var product = _productService.GetById(Id);
+            if (product == null)
+            {
+                return RedirectToAction("index");
+            }
+
+            var items = HttpContext.Session.Get<List<Item>>(Lib.SessionKeyCart);
+
+            if (items != null && items.Any(s => s.Product.Id == Id))
+            {
+                
+                    int itemIndex = items.FindIndex(x => x.Product.Id == Id);
+                    items.RemoveAt(itemIndex);
+             
+            }
+            
+            var totalPrice = items.Sum(x => x.Product.Price * x.Quantity);
+            HttpContext.Session.Set<decimal>(Lib.SessionKeyTotalPrice, totalPrice);
+            HttpContext.Session.Set<List<Item>>(Lib.SessionKeyCart, items);
+
+          
+            return RedirectToAction("index");
+        }
+
+        public IActionResult Increase(Guid Id)
+        {
+            var sessionUser = HttpContext.Session.Get<string>(Lib.SessionKeyUserId);
+            var userid = _userManager.GetUserId(User);
+            if (sessionUser != userid)
+            {
+                HttpContext.Session.Clear();
+                HttpContext.Session.Set<string>(Lib.SessionKeyUserId, userid);
+            }
+
+            var product = _productService.GetById(Id);
+            if (product == null)
+            {
+                return RedirectToAction("index");
+            }
+
+            var items = HttpContext.Session.Get<List<Item>>(Lib.SessionKeyCart);
+            if (items != null)
+            {
+                if (items.Any(s => s.Product.Id == Id))
+                {
+                    int itemIndex = items.FindIndex(x => x.Product.Id == Id);
+                    items[itemIndex].Quantity += 1;
+                }
+            }
+           
+            var totalPrice = items.Sum(x => x.Product.Price * x.Quantity);
+            HttpContext.Session.Set<decimal>(Lib.SessionKeyTotalPrice, totalPrice);
+            HttpContext.Session.Set<List<Item>>(Lib.SessionKeyCart, items);
+
+       
+            return RedirectToAction("index");
+        }
+        public IActionResult Decrease(Guid Id)
+        {
+            var sessionUser = HttpContext.Session.Get<string>(Lib.SessionKeyUserId);
+            var userid = _userManager.GetUserId(User);
+            if (sessionUser != userid)
+            {
+                HttpContext.Session.Clear();
+                HttpContext.Session.Set<string>(Lib.SessionKeyUserId, userid);
+            }
+
+            var product = _productService.GetById(Id);
+            if (product == null)
+            {
+                return RedirectToAction("index");
+            }
+
+            var items = HttpContext.Session.Get<List<Item>>(Lib.SessionKeyCart);
+
+            if (items != null && items.Any(s => s.Product.Id == Id))
+            {
+                    int itemIndex = items.FindIndex(x => x.Product.Id == Id);
+                    var itemQ = items[itemIndex].Quantity;
+                    if(itemQ==1)
+                        {
+                        items.RemoveAt(itemIndex);
+                  
+                        }
+                    else
+                    {
+                        items[itemIndex].Quantity--;
+                    
+                }
+                
+            }
+            else
+            {
+                TempData["Error"] = "Fanns inte i varukorgen. Försök igen";
+            }
+            var totalPrice = items.Sum(x => x.Product.Price * x.Quantity);
+            HttpContext.Session.Set<decimal>(Lib.SessionKeyTotalPrice, totalPrice);
+            HttpContext.Session.Set<List<Item>>(Lib.SessionKeyCart, items);
+
+            
+            return RedirectToAction("index");
         }
     }
 }
