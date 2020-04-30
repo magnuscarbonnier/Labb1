@@ -25,13 +25,7 @@ namespace Web.Controllers
 
         public IActionResult Index()
         {
-            var sessionUser = HttpContext.Session.Get<string>(Lib.SessionKeyUserId);
-            var userid = _userManager.GetUserId(User);
-            if (sessionUser != userid)
-            {
-                HttpContext.Session.Clear();
-                HttpContext.Session.Set<string>(Lib.SessionKeyUserId, userid);
-            }
+            CheckUser();
 
             CartViewModel vm = new CartViewModel();
             var currentCart = HttpContext.Session.Get<List<Item>>(Lib.SessionKeyCart);
@@ -45,13 +39,7 @@ namespace Web.Controllers
         [HttpPost]
         public async Task<IActionResult> PlaceOrder()
         {
-            var sessionUser = HttpContext.Session.Get<string>(Lib.SessionKeyUserId);
-            var userid = _userManager.GetUserId(User);
-            if (sessionUser != userid)
-            {
-                HttpContext.Session.Clear();
-                HttpContext.Session.Set<string>(Lib.SessionKeyUserId, userid);
-            }
+            CheckUser();
 
             var cart = HttpContext.Session.Get<List<Item>>(Lib.SessionKeyCart);
             if(cart==null)
@@ -83,13 +71,7 @@ namespace Web.Controllers
 
         public IActionResult Remove(Guid Id)
         {
-            var sessionUser = HttpContext.Session.Get<string>(Lib.SessionKeyUserId);
-            var userid = _userManager.GetUserId(User);
-            if (sessionUser != userid)
-            {
-                HttpContext.Session.Clear();
-                HttpContext.Session.Set<string>(Lib.SessionKeyUserId, userid);
-            }
+            CheckUser();
 
             var product = _productService.GetById(Id);
             if (product == null)
@@ -101,21 +83,21 @@ namespace Web.Controllers
 
             if (items != null && items.Any(s => s.Product.Id == Id))
             {
-                
-                    int itemIndex = items.FindIndex(x => x.Product.Id == Id);
-                    items.RemoveAt(itemIndex);
-             
+
+                int itemIndex = items.FindIndex(x => x.Product.Id == Id);
+                items.RemoveAt(itemIndex);
+
             }
-            
+
             var totalPrice = items.Sum(x => x.Product.Price * x.Quantity);
             HttpContext.Session.Set<decimal>(Lib.SessionKeyTotalPrice, totalPrice);
             HttpContext.Session.Set<List<Item>>(Lib.SessionKeyCart, items);
 
-          
+
             return RedirectToAction("index");
         }
 
-        public IActionResult Increase(Guid Id)
+        private void CheckUser()
         {
             var sessionUser = HttpContext.Session.Get<string>(Lib.SessionKeyUserId);
             var userid = _userManager.GetUserId(User);
@@ -124,6 +106,11 @@ namespace Web.Controllers
                 HttpContext.Session.Clear();
                 HttpContext.Session.Set<string>(Lib.SessionKeyUserId, userid);
             }
+        }
+
+        public IActionResult Increase(Guid Id)
+        {
+            CheckUser();
 
             var product = _productService.GetById(Id);
             if (product == null)
@@ -150,13 +137,7 @@ namespace Web.Controllers
         }
         public IActionResult Decrease(Guid Id)
         {
-            var sessionUser = HttpContext.Session.Get<string>(Lib.SessionKeyUserId);
-            var userid = _userManager.GetUserId(User);
-            if (sessionUser != userid)
-            {
-                HttpContext.Session.Clear();
-                HttpContext.Session.Set<string>(Lib.SessionKeyUserId, userid);
-            }
+            CheckUser();
 
             var product = _productService.GetById(Id);
             if (product == null)

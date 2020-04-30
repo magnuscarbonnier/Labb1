@@ -62,7 +62,7 @@ namespace Web.Controllers
         {
             var sessionUser = HttpContext.Session.Get<string>(Lib.SessionKeyUserId);
             var cart = HttpContext.Session.Get<List<Item>>(Lib.SessionKeyCart);
-           
+            
             if (order.UserId == sessionUser)
             {
                 order.OrderItems = cart;

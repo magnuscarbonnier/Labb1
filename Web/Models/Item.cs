@@ -12,5 +12,9 @@ namespace Web.Models
         
         [Display(Name = "Antal")]
         public int Quantity { get; set; }
+        public Item()
+        {
+            Product = new Product();
+        }
     }
 }
