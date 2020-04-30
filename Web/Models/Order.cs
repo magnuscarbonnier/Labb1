@@ -56,6 +56,7 @@ namespace Web.Models
         public Order()
         {
             Id = Guid.NewGuid();
+            OrderItems = new List<Item>();
         } 
     }
 }
