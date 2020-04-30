@@ -14,6 +14,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Web.Models;
 using Web.Services;
+using Microsoft.AspNetCore.Http;
 
 namespace Web
 {
@@ -36,7 +37,6 @@ namespace Web
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
             services.AddDistributedMemoryCache();//added
-            services.AddDistributedMemoryCache();
 
             services.AddSession(options =>
             {
@@ -44,10 +44,12 @@ namespace Web
                 options.Cookie.HttpOnly = true;
                 options.Cookie.IsEssential = true;
             });//added
+            services.AddHttpContextAccessor();//added
 
             services.AddControllersWithViews();
             services.AddRazorPages();
             services.AddSingleton<IProductService, MockProductService>();
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

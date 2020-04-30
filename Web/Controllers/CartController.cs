@@ -25,14 +25,7 @@ namespace Web.Controllers
 
         public IActionResult Index()
         {
-            var sessionUser = HttpContext.Session.Get<string>(Lib.SessionKeyUserId);
-            var userid = _userManager.GetUserId(User);
-            if (sessionUser != userid)
-            {
-                HttpContext.Session.Clear();
-                HttpContext.Session.Set<string>(Lib.SessionKeyUserId, userid);
-            }
-
+            HttpContext.Session.CheckUserId(HttpContext, _userManager);
             CartViewModel vm = new CartViewModel();
             var currentCart = HttpContext.Session.Get<List<Item>>(Lib.SessionKeyCart);
             if (currentCart == null)
@@ -42,17 +35,11 @@ namespace Web.Controllers
             return View(vm);
         }
 
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> PlaceOrder()
         {
-            var sessionUser = HttpContext.Session.Get<string>(Lib.SessionKeyUserId);
-            var userid = _userManager.GetUserId(User);
-            if (sessionUser != userid)
-            {
-                HttpContext.Session.Clear();
-                HttpContext.Session.Set<string>(Lib.SessionKeyUserId, userid);
-            }
-
+            HttpContext.Session.CheckUserId(HttpContext, _userManager);
             var cart = HttpContext.Session.Get<List<Item>>(Lib.SessionKeyCart);
             if(cart==null)
             {
@@ -80,17 +67,10 @@ namespace Web.Controllers
             HttpContext.Session.Set<Order>(Lib.SessionKeyOrder, order);
             return RedirectToAction("Index", "Order");
         }
-
+        [Authorize]
         public IActionResult Remove(Guid Id)
         {
-            var sessionUser = HttpContext.Session.Get<string>(Lib.SessionKeyUserId);
-            var userid = _userManager.GetUserId(User);
-            if (sessionUser != userid)
-            {
-                HttpContext.Session.Clear();
-                HttpContext.Session.Set<string>(Lib.SessionKeyUserId, userid);
-            }
-
+            HttpContext.Session.CheckUserId(HttpContext, _userManager);
             var product = _productService.GetById(Id);
             if (product == null)
             {
@@ -101,30 +81,25 @@ namespace Web.Controllers
 
             if (items != null && items.Any(s => s.Product.Id == Id))
             {
-                
-                    int itemIndex = items.FindIndex(x => x.Product.Id == Id);
-                    items.RemoveAt(itemIndex);
-             
+
+                int itemIndex = items.FindIndex(x => x.Product.Id == Id);
+                items.RemoveAt(itemIndex);
+
             }
-            
+
             var totalPrice = items.Sum(x => x.Product.Price * x.Quantity);
             HttpContext.Session.Set<decimal>(Lib.SessionKeyTotalPrice, totalPrice);
             HttpContext.Session.Set<List<Item>>(Lib.SessionKeyCart, items);
 
-          
+
             return RedirectToAction("index");
         }
 
+
+        [Authorize]
         public IActionResult Increase(Guid Id)
         {
-            var sessionUser = HttpContext.Session.Get<string>(Lib.SessionKeyUserId);
-            var userid = _userManager.GetUserId(User);
-            if (sessionUser != userid)
-            {
-                HttpContext.Session.Clear();
-                HttpContext.Session.Set<string>(Lib.SessionKeyUserId, userid);
-            }
-
+            HttpContext.Session.CheckUserId(HttpContext, _userManager);
             var product = _productService.GetById(Id);
             if (product == null)
             {
@@ -148,16 +123,10 @@ namespace Web.Controllers
        
             return RedirectToAction("index");
         }
+        [Authorize]
         public IActionResult Decrease(Guid Id)
         {
-            var sessionUser = HttpContext.Session.Get<string>(Lib.SessionKeyUserId);
-            var userid = _userManager.GetUserId(User);
-            if (sessionUser != userid)
-            {
-                HttpContext.Session.Clear();
-                HttpContext.Session.Set<string>(Lib.SessionKeyUserId, userid);
-            }
-
+            HttpContext.Session.CheckUserId(HttpContext, _userManager);
             var product = _productService.GetById(Id);
             if (product == null)
             {
