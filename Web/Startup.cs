@@ -44,6 +44,7 @@ namespace Web
                 options.Cookie.HttpOnly = true;
                 options.Cookie.IsEssential = true;
             });//added
+            services.AddHttpContextAccessor();//added
 
             services.AddControllersWithViews();
             services.AddRazorPages();

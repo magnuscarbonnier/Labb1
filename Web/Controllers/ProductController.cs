@@ -34,14 +34,8 @@ namespace Web.Controllers
 
         public IActionResult AddToCart(Guid Id)
         {
-            var sessionUser = HttpContext.Session.Get<string>(Lib.SessionKeyUserId);
-            var userid = _userManager.GetUserId(User);
-            if(sessionUser!=userid)
-            {
-                HttpContext.Session.Clear();
-                HttpContext.Session.Set<string>(Lib.SessionKeyUserId,userid);
-            }
-
+            HttpContext.Session.CheckUserId(HttpContext, _userManager);
+           
             var product = _productService.GetById(Id);
             if(product == null)
             {

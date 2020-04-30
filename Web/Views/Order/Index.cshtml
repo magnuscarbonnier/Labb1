@@ -18,7 +18,7 @@
             <div class="card-body bg-dark text-white">
 
                 <div class="card-text bg-dark text-white">
-                    <form asp-action="SaveOrder">
+                    <form asp-action="Index">
                         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                         @Html.HiddenFor(x => x.OrderItems)
                         @Html.HiddenFor(x => x.Id)

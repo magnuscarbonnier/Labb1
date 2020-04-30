@@ -21,78 +21,84 @@ namespace Web.Controllers
             _productService = productService;
             _userManager = userManager;
         }
+        [Authorize]
         public IActionResult Index()
         {
-            var sessionUser = HttpContext.Session.Get<string>(Lib.SessionKeyUserId);
-            var userid = _userManager.GetUserId(User);
+            HttpContext.Session.CheckUserId(HttpContext, _userManager);
             var order = HttpContext.Session.Get<Order>(Lib.SessionKeyOrder);
-
-            if(!order.OrderItems.Any())
-            {
-                TempData["Error"]="Du har inga varor i din order. Lägg till varor och försök igen";
-                return RedirectToAction("Index", "Product");
-            }
-            if (sessionUser != userid && userid != null)
-            {
-                HttpContext.Session.Clear();
-                HttpContext.Session.Set<string>(Lib.SessionKeyUserId, userid);
-                TempData["Error"] = "Lägg till varor i kundvagnen och försök igen...";
-                return RedirectToAction("Index", "Home");
-            }
-            else if (order == null)
+            if (order == null)
             {
                 TempData["Error"] = "Finns ingen aktiv order...";
                 return RedirectToAction("Index", "Home");
             }
+            else if(!order.OrderItems.Any())
+            {
+                TempData["Error"]="Du har inga varor i din order. Lägg till varor och försök igen";
+                return RedirectToAction("Index", "Product");
+            }
+            
+            
 
             return View(order);
         }
-        public IActionResult Details(Order order)
+        [Authorize]
+        public IActionResult Details()
         {
+            HttpContext.Session.CheckUserId(HttpContext, _userManager);
             var sessionUser = HttpContext.Session.Get<string>(Lib.SessionKeyUserId);
-            
-            if (sessionUser==order.UserId)
+            var order = HttpContext.Session.Get<Order>(Lib.SessionKeyOrder);
+            if (sessionUser==order.UserId && order!=null)
             {
                 return View(order);
             }
+            TempData["Error"] = "Finns ingen aktiv order...";
             return RedirectToAction("Index", "Home");
         }
+        [HttpPost]
         [Authorize]
-        public IActionResult SaveOrder(Order order)
+        public IActionResult Index(Order order)
         {
+            if (!ModelState.IsValid)
+                return View(order);
+            HttpContext.Session.CheckUserId(HttpContext, _userManager);
             var sessionUser = HttpContext.Session.Get<string>(Lib.SessionKeyUserId);
             var cart = HttpContext.Session.Get<List<Item>>(Lib.SessionKeyCart);
             
             if (order.UserId == sessionUser)
             {
+                var orderList = HttpContext.Session.Get<List<Order>>(Lib.SessionKeyOrderList);
+                if (orderList == null)
+                {
+                    orderList = new List<Order>();
+                }
                 order.OrderItems = cart;
+                orderList.Add(order);
                 //Spara order till databasen istället
                 HttpContext.Session.Set<Order>(Lib.SessionKeyOrder, order);
                 //Töm kundvagn
                 HttpContext.Session.Remove(Lib.SessionKeyCart);
-                //Töm order
-                HttpContext.Session.Remove(Lib.SessionKeyOrder);
-                return RedirectToAction("Details", "Order", order);
+                //Spara till lista av ordrar
+                HttpContext.Session.Set<List<Order>>(Lib.SessionKeyOrderList, orderList);
+                return RedirectToAction("Details", "Order");
             }
+            TempData["Error"] = "Finns ingen aktiv order...";
             return RedirectToAction("Index", "Home");
         }
+        [Authorize]
         public IActionResult Remove(Guid Id)
         {
+            HttpContext.Session.CheckUserId(HttpContext, _userManager);
             var sessionUser = HttpContext.Session.Get<string>(Lib.SessionKeyUserId);
-            var userid = _userManager.GetUserId(User);
+           
             var order = HttpContext.Session.Get<Order>(Lib.SessionKeyOrder);
-            if (sessionUser != userid)
-            {
-                HttpContext.Session.Clear();
-                HttpContext.Session.Set<string>(Lib.SessionKeyUserId, userid);
-            }
+           
 
             var product = _productService.GetById(Id);
             if (product == null)
             {
+                TempData["Error"] = "Finns ingen produkt med id "+Id;
                 return RedirectToAction("Index", "Order");
             }
-
 
             if (order != null && order.OrderItems.Any(s => s.Product.Id == Id))
             {
@@ -110,21 +116,19 @@ namespace Web.Controllers
 
             return RedirectToAction("Index");
         }
-
+        [Authorize]
         public IActionResult Increase(Guid Id)
         {
+            HttpContext.Session.CheckUserId(HttpContext, _userManager);
             var sessionUser = HttpContext.Session.Get<string>(Lib.SessionKeyUserId);
-            var userid = _userManager.GetUserId(User);
+            
             var order = HttpContext.Session.Get<Order>(Lib.SessionKeyOrder);
-            if (sessionUser != userid)
-            {
-                HttpContext.Session.Clear();
-                HttpContext.Session.Set<string>(Lib.SessionKeyUserId, userid);
-            }
+           
 
             var product = _productService.GetById(Id);
             if (product == null)
             {
+                TempData["Error"] = "Finns ingen produkt med id " + Id;
                 return RedirectToAction("Index", "Order");
             }
 
@@ -147,20 +151,19 @@ namespace Web.Controllers
 
             return RedirectToAction("Index", "Order");
         }
+        [Authorize]
         public IActionResult Decrease(Guid Id)
         {
+            HttpContext.Session.CheckUserId(HttpContext, _userManager);
             var sessionUser = HttpContext.Session.Get<string>(Lib.SessionKeyUserId);
-            var userid = _userManager.GetUserId(User);
+            
             var order = HttpContext.Session.Get<Order>(Lib.SessionKeyOrder);
-            if (sessionUser != userid)
-            {
-                HttpContext.Session.Clear();
-                HttpContext.Session.Set<string>(Lib.SessionKeyUserId, userid);
-            }
+            
 
             var product = _productService.GetById(Id);
             if (product == null)
             {
+                TempData["Error"] = "Finns ingen produkt med id " + Id;
                 return RedirectToAction("Index", "Order");
             }
 

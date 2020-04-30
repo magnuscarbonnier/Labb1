@@ -25,8 +25,7 @@ namespace Web.Controllers
 
         public IActionResult Index()
         {
-            CheckUser();
-
+            HttpContext.Session.CheckUserId(HttpContext, _userManager);
             CartViewModel vm = new CartViewModel();
             var currentCart = HttpContext.Session.Get<List<Item>>(Lib.SessionKeyCart);
             if (currentCart == null)
@@ -36,11 +35,11 @@ namespace Web.Controllers
             return View(vm);
         }
 
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> PlaceOrder()
         {
-            CheckUser();
-
+            HttpContext.Session.CheckUserId(HttpContext, _userManager);
             var cart = HttpContext.Session.Get<List<Item>>(Lib.SessionKeyCart);
             if(cart==null)
             {
@@ -68,11 +67,10 @@ namespace Web.Controllers
             HttpContext.Session.Set<Order>(Lib.SessionKeyOrder, order);
             return RedirectToAction("Index", "Order");
         }
-
+        [Authorize]
         public IActionResult Remove(Guid Id)
         {
-            CheckUser();
-
+            HttpContext.Session.CheckUserId(HttpContext, _userManager);
             var product = _productService.GetById(Id);
             if (product == null)
             {
@@ -97,21 +95,11 @@ namespace Web.Controllers
             return RedirectToAction("index");
         }
 
-        private void CheckUser()
-        {
-            var sessionUser = HttpContext.Session.Get<string>(Lib.SessionKeyUserId);
-            var userid = _userManager.GetUserId(User);
-            if (sessionUser != userid)
-            {
-                HttpContext.Session.Clear();
-                HttpContext.Session.Set<string>(Lib.SessionKeyUserId, userid);
-            }
-        }
 
+        [Authorize]
         public IActionResult Increase(Guid Id)
         {
-            CheckUser();
-
+            HttpContext.Session.CheckUserId(HttpContext, _userManager);
             var product = _productService.GetById(Id);
             if (product == null)
             {
@@ -135,10 +123,10 @@ namespace Web.Controllers
        
             return RedirectToAction("index");
         }
+        [Authorize]
         public IActionResult Decrease(Guid Id)
         {
-            CheckUser();
-
+            HttpContext.Session.CheckUserId(HttpContext, _userManager);
             var product = _productService.GetById(Id);
             if (product == null)
             {
