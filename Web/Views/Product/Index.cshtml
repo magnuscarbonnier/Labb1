@@ -1,45 +1,56 @@
 ﻿@model Web.ViewModels.ProductViewModel
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Produkter";
 }
 
-@*<h1>Index</h1>
-
-
-<h1>Sessions</h1>
-<form asp-action="SaveName" method="post">
-    Your name:
-    @Html.DisplayFor(x => x.Namn)
-    @Html.EditorFor(x => x.Namn)
-    <input type="submit" value="Save" />
-</form>*@
-
-
-<h1>Products</h1>
-
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-
-<div class="row d-flex flex-row justify-content-around flex-wrap">
-    @foreach (var item in Model.Products)
+<h1>Produkter</h1>
+<div class="container">
+    @if(!User.Identity.IsAuthenticated)
     {
-        @Html.HiddenFor(x => item.Id)
-        <div class="card flex-grow-0 flex-shrink-1 m-2" style="flex-basis: 300px">
-            <img src="@item.ImgSrc" alt="@item.Name" class="card-img-top" />
-            <div class="card-body">
-                <h3 class="card-title">@item.Name</h3>
-                <p class="card-text">@item.Description</p>
-                <p>
-                    @item.Price.ToString("C");
-                </p>
-                    @if (User.Identity.IsAuthenticated)
-                    {
-                        <p>@Html.ActionLink("Lägg till i varukorg", "AddToCart", "Product", new { Id = item.Id }, new { @class = "btn btn-secondary" })</p>
-                    }
-                
-            </div>
+    <div class="text-center">
+        <p>Du måste vara inloggad för att kunna handla.</p>
+        <a class="btn btn-secondary" asp-area="Identity" asp-page="/Account/Login">Logga in</a>
+    </div>
+    }
+    
+    @if (Model.Products.Count() > 0)
+    {
+        <div class="row">
+            @foreach (var product in Model.Products)
+            {
+                <div class="row d-flex flex-row justify-content-around flex-wrap">
+                    <partial name="_Product" model="product" />
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            <h4 class="text-uppercase">Finns inga produkter att visa</h4>
         </div>
     }
 </div>
+
+@*<div class="row d-flex flex-row justify-content-around flex-wrap">
+        @foreach (var item in Model.Products)
+        {
+            @Html.HiddenFor(x => item.Id)
+            <div class="card flex-grow-0 flex-shrink-1 m-2" style="flex-basis: 300px">
+                <img src="@item.ImgSrc" alt="@item.Name" class="card-img-top" />
+                <div class="card-body">
+                    <h3 class="card-title">@item.Name</h3>
+                    <p class="card-text">@item.Description</p>
+                    <p>
+                        @item.Price.ToString("C");
+                    </p>
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <p>@Html.ActionLink("Lägg till i varukorg", "AddToCart", "Product", new { Id = item.Id }, new { @class = "btn btn-secondary" })</p>
+                        }
+
+                </div>
+            </div>
+        }
+    </div>*@
