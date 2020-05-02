@@ -1,0 +1,17 @@
+﻿@model Web.Models.Product
+    <div class="m-md-4">
+        <form asp-controller="Product" asp-route-id="@Model.Id" asp-action="AddToCart">
+            @Html.HiddenFor(c => c.Id)
+
+            <div class="card flex-grow-0 flex-shrink-1 box-shadow rounded" style="flex-basis: 250;">
+                <img class="img-fluid overflow-hidden" style="width: 250px; height: 250px; overflow:hidden;" src="@Model.ImgSrc" alt="@Model.Name">
+                <div class="card-body">
+                    <h4 class="card-title">@Model.Name</h4>
+                    <p class="card-text">@Model.Description</p>
+                    <p>@Model.Price.ToString("C")</p>
+                    <input class="btn btn-secondary" type="submit" value="Lägg till i kundvagn" />
+                </div>
+            </div>
+
+        </form>
+    </div>
