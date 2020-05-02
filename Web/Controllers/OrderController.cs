@@ -47,9 +47,12 @@ namespace Web.Controllers
             HttpContext.Session.CheckUserId(HttpContext, _userManager);
             var sessionUser = HttpContext.Session.Get<string>(Lib.SessionKeyUserId);
             var order = HttpContext.Session.Get<Order>(Lib.SessionKeyOrder);
-            if (sessionUser==order.UserId && order!=null)
+            if(sessionUser != null && order != null)
+            { 
+            if (sessionUser==order.UserId)
             {
                 return View(order);
+            }
             }
             TempData["Error"] = "Finns ingen aktiv order...";
             return RedirectToAction("Index", "Home");

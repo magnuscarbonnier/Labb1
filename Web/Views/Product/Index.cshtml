@@ -6,7 +6,14 @@
 
 <h1>Produkter</h1>
 <div class="container">
-
+    @if(!User.Identity.IsAuthenticated)
+    {
+    <div class="text-center">
+        <p>Du måste vara inloggad för att kunna handla.</p>
+        <a class="btn btn-secondary" asp-area="Identity" asp-page="/Account/Login">Logga in</a>
+    </div>
+    }
+    
     @if (Model.Products.Count() > 0)
     {
         <div class="row">

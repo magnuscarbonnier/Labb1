@@ -5,7 +5,6 @@
 }
 
 <h1>Orderbekräftelse</h1>
-
 <div>
     <h4>Order</h4>
     <hr />
@@ -111,4 +110,5 @@
         @Html.LabelFor(modelItem => modelItem.TotalPrice):
         @Html.DisplayFor(modelItem => modelItem.TotalPrice)
     </h4>
+    <a class="btn btn-outline-secondary" asp-area="Identity" asp-page="/Account/Manage/YourOrders">Visa dina ordrar</a>
 </div>
