@@ -14,20 +14,15 @@ namespace Web.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-        private readonly IProductService _productService;
 
-        public HomeController(ILogger<HomeController> logger, IProductService productService)
+        public HomeController(ILogger<HomeController> logger)
         {
             _logger = logger;
-            _productService = productService;
         }
 
         public IActionResult Index()
         {
-            HomeViewModel vm = new HomeViewModel();
-            var products = _productService.GetAll().OrderByDescending(c=>c.Price).Take(3);
-            vm.Top3Products = products;
-            return View(vm);
+            return View();
         }
 
         public IActionResult Privacy()
