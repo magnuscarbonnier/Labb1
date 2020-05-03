@@ -49,6 +49,7 @@ namespace Web
             services.AddControllersWithViews();
             services.AddRazorPages();
             services.AddSingleton<IProductService, MockProductService>();
+            services.AddTransient<ICartService, CartService>();
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
         }
 

@@ -24,14 +24,14 @@ namespace Web.Controllers
         [Authorize]
         public IActionResult Index()
         {
-            HttpContext.Session.CheckUserId(HttpContext, _userManager);
+            //HttpContext.Session.CheckUserId(HttpContext, _userManager);
             var order = HttpContext.Session.Get<Order>(Lib.SessionKeyOrder);
             if (order == null)
             {
                 TempData["Error"] = "Finns ingen aktiv order...";
                 return RedirectToAction("Index", "Home");
             }
-            else if(!order.OrderItems.Any())
+            else if(!order.OrderItems.CartItems.Any())
             {
                 TempData["Error"]="Du har inga varor i din order. Lägg till varor och försök igen";
                 return RedirectToAction("Index", "Product");
@@ -44,18 +44,9 @@ namespace Web.Controllers
         [Authorize]
         public IActionResult Details()
         {
-            HttpContext.Session.CheckUserId(HttpContext, _userManager);
-            var sessionUser = HttpContext.Session.Get<string>(Lib.SessionKeyUserId);
             var order = HttpContext.Session.Get<Order>(Lib.SessionKeyOrder);
-            if(sessionUser != null && order != null)
-            { 
-            if (sessionUser==order.UserId)
-            {
+            
                 return View(order);
-            }
-            }
-            TempData["Error"] = "Finns ingen aktiv order...";
-            return RedirectToAction("Index", "Home");
         }
         [HttpPost]
         [Authorize]
@@ -65,7 +56,7 @@ namespace Web.Controllers
                 return View(order);
             HttpContext.Session.CheckUserId(HttpContext, _userManager);
             var sessionUser = HttpContext.Session.Get<string>(Lib.SessionKeyUserId);
-            var cart = HttpContext.Session.Get<List<Item>>(Lib.SessionKeyCart);
+            var cart = HttpContext.Session.Get<Cart>(Lib.SessionKeyCart);
             
             if (order.UserId == sessionUser)
             {
@@ -103,17 +94,17 @@ namespace Web.Controllers
                 return RedirectToAction("Index", "Order");
             }
 
-            if (order != null && order.OrderItems.Any(s => s.Product.Id == Id))
+            if (order != null && order.OrderItems.CartItems.Any(s => s.Product.Id == Id))
             {
 
-                int itemIndex = order.OrderItems.FindIndex(x => x.Product.Id == Id);
-                order.OrderItems.RemoveAt(itemIndex);
+                int itemIndex = order.OrderItems.CartItems.FindIndex(x => x.Product.Id == Id);
+                order.OrderItems.CartItems.RemoveAt(itemIndex);
 
             }
 
-            order.TotalPrice = order.OrderItems.Sum(x => x.Product.Price * x.Quantity);
+            order.TotalPrice = order.OrderItems.Total();
             HttpContext.Session.Set<decimal>(Lib.SessionKeyTotalPrice, order.TotalPrice);
-            HttpContext.Session.Set<List<Item>>(Lib.SessionKeyCart, order.OrderItems);
+            HttpContext.Session.Set<Cart>(Lib.SessionKeyCart, order.OrderItems);
             HttpContext.Session.Set<Order>(Lib.SessionKeyOrder, order);
 
 
@@ -138,16 +129,16 @@ namespace Web.Controllers
             
             if (order.OrderItems != null)
             {
-                if (order.OrderItems.Any(s => s.Product.Id == Id))
+                if (order.OrderItems.CartItems.Any(s => s.Product.Id == Id))
                 {
-                    int itemIndex = order.OrderItems.FindIndex(x => x.Product.Id == Id);
-                    order.OrderItems[itemIndex].Quantity += 1;
+                    int itemIndex = order.OrderItems.CartItems.FindIndex(x => x.Product.Id == Id);
+                    order.OrderItems.CartItems[itemIndex].Quantity += 1;
                 }
             }
 
-            order.TotalPrice = order.OrderItems.Sum(x => x.Product.Price * x.Quantity);
+            order.TotalPrice = order.OrderItems.Total();
             HttpContext.Session.Set<decimal>(Lib.SessionKeyTotalPrice, order.TotalPrice);
-            HttpContext.Session.Set<List<Item>>(Lib.SessionKeyCart, order.OrderItems);
+            HttpContext.Session.Set<Cart>(Lib.SessionKeyCart, order.OrderItems);
 
             HttpContext.Session.Set<Order>(Lib.SessionKeyOrder, order);
 
@@ -172,18 +163,18 @@ namespace Web.Controllers
 
             
 
-            if (order.OrderItems != null && order.OrderItems.Any(s => s.Product.Id == Id))
+            if (order.OrderItems != null && order.OrderItems.CartItems.Any(s => s.Product.Id == Id))
             {
-                int itemIndex = order.OrderItems.FindIndex(x => x.Product.Id == Id);
-                var itemQ = order.OrderItems[itemIndex].Quantity;
+                int itemIndex = order.OrderItems.CartItems.FindIndex(x => x.Product.Id == Id);
+                var itemQ = order.OrderItems.CartItems[itemIndex].Quantity;
                 if (itemQ == 1)
                 {
-                    order.OrderItems.RemoveAt(itemIndex);
+                    order.OrderItems.CartItems.RemoveAt(itemIndex);
 
                 }
                 else
                 {
-                    order.OrderItems[itemIndex].Quantity--;
+                    order.OrderItems.CartItems[itemIndex].Quantity--;
 
                 }
 
@@ -192,9 +183,9 @@ namespace Web.Controllers
             {
                 TempData["Error"] = "Fanns inte i varukorgen. Försök igen";
             }
-            order.TotalPrice = order.OrderItems.Sum(x => x.Product.Price * x.Quantity);
+            order.TotalPrice = order.OrderItems.Total();
             HttpContext.Session.Set<decimal>(Lib.SessionKeyTotalPrice, order.TotalPrice);
-            HttpContext.Session.Set<List<Item>>(Lib.SessionKeyCart, order.OrderItems);
+            HttpContext.Session.Set<List<Item>>(Lib.SessionKeyCart, order.OrderItems.CartItems);
             HttpContext.Session.Set<Order>(Lib.SessionKeyOrder, order);
 
 
