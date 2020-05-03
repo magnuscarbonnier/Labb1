@@ -13,66 +13,66 @@ namespace Web.Services
             new Product()
             {
                 Id = Guid.NewGuid(),
-                Description = "Ewan",
-                Name = "Tshirt",
-                Price = 9.95M,
-                ImgSrc = "https://i.pinimg.com/736x/7a/c8/a7/7ac8a76ab34814275c2f3326bc79d437.jpg"
+                Description = "Kattoutfit",
+                Name = "Hoodie",
+                Price = 199.95M,
+                ImgSrc = "https://cdn.shopify.com/s/files/1/0049/4423/2534/products/hosi-1_789bc507-8604-4b21-9edb-d8a56549730c_1000x1000.jpg?v=1571718188"
             },
             new Product()
             {
                 Id = Guid.NewGuid(),
+                Description = "Randig",
+                Name = "Tröja",
+                Price = 163M,
+                ImgSrc = "https://cdn.shopify.com/s/files/1/0049/4423/2534/products/O1CN01DTynvH1SZ7cBdMaIj__1080692260_700x.jpg?v=1571718188"
+            },
+            new Product()
+        {
+            Id = Guid.NewGuid(),
+                Description = "Gubbmodell",
+                Name = "Keps",
+                Price = 59.90M,
+                ImgSrc = "https://laughingsquid.com/wp-content/uploads/il_fullxfull.308715501.jpg"
+            },
+            new Product()
+        {
+            Id = Guid.NewGuid(),
                 Description = "Yoda",
-                Name = "Leggings",
-                Price = 19.95M,
-                ImgSrc = "https://cdn.shopify.com/s/files/1/1705/1793/products/product-image-186869758_753_800x.jpg?v=1513580964"
+                Name = "Mössa",
+                Price = 119.90M,
+                ImgSrc = "https://partycity6.scene7.com/is/image/PartyCity/_pdp_sq_?$_1000x1000_$&$product=PartyCity/630950"
             },
             new Product()
         {
             Id = Guid.NewGuid(),
-                Description = "Anders Tegnell S",
-                Name = "Tshirt",
+                Description = "Folie",
+                Name = "Mössa",
                 Price = 199.90M,
-                ImgSrc = "https://img.tradera.net/images/327/349543327_9d67fb0e-f063-4fe8-99f7-df6e56aba590.jpg"
+                ImgSrc = "https://cdn.shopify.com/s/files/1/1365/2497/products/tin-foil-hat-for-cats_2000x.jpg?v=1522252551"
             },
             new Product()
         {
             Id = Guid.NewGuid(),
-                Description = "Anders Tegnell M",
-                Name = "Tshirt",
-                Price = 199.90M,
-                ImgSrc = "https://img.tradera.net/images/327/349543327_9d67fb0e-f063-4fe8-99f7-df6e56aba590.jpg"
+                Description = "Lejon",
+                Name = "Mössa",
+                Price = 99.95M,
+                ImgSrc = "https://cdn11.bigcommerce.com/s-sabbaqv0i5/images/stencil/1000x1000/products/200/911/Funny-Cute-Pet-Cat-Costume-Lion-Mane-Wig-Cap-Hat-for-Cat-Dog-Halloween-Christmas-Clothes__86779.1565780913.jpg?c=2&imbypass=on"
             },
             new Product()
         {
             Id = Guid.NewGuid(),
-                Description = "Anders Tegnell XXL",
-                Name = "Tshirt",
-                Price = 199.90M,
-                ImgSrc = "https://img.tradera.net/images/327/349543327_9d67fb0e-f063-4fe8-99f7-df6e56aba590.jpg"
+                Description = "Totoro",
+                Name = "Maskeraddräkt",
+                Price = 146M,
+                ImgSrc = "https://cdn11.bigcommerce.com/s-sabbaqv0i5/images/stencil/1000x1000/products/979/5412/Warm-Soft-Fleece-Pet-Dog-Cat-Clothes-Cartoon-Puppy-Dog-Costumes-Autumn-Winter-Clothing-For-Small__02774.1570351119.jpg?c=2&imbypass=on"
             },
             new Product()
         {
             Id = Guid.NewGuid(),
-                Description = "Obi Wan S",
-                Name = "Tshirt",
-                Price = 299.95M,
-                ImgSrc = "https://www.dhresource.com/0x0/f2/albu/g10/M00/AF/A9/rBVaWV5Xj1SANZR_AAC3PMUet4w567.jpg"
-            },
-            new Product()
-        {
-            Id = Guid.NewGuid(),
-                Description = "Obi Wan M",
-                Name = "Tshirt",
-                Price = 299.95M,
-                ImgSrc = "https://www.dhresource.com/0x0/f2/albu/g10/M00/AF/A9/rBVaWV5Xj1SANZR_AAC3PMUet4w567.jpg"
-            },
-            new Product()
-        {
-            Id = Guid.NewGuid(),
-                Description = "Obi Wan L",
-                Name = "Tshirt",
+                Description = "Grå",
+                Name = "Kattbädd",
                 Price = 248.95M,
-                ImgSrc = "https://www.dhresource.com/0x0/f2/albu/g10/M00/AF/A9/rBVaWV5Xj1SANZR_AAC3PMUet4w567.jpg"
+                ImgSrc = "https://cdn11.bigcommerce.com/s-sabbaqv0i5/images/stencil/1000x1000/products/134/527/Foldable-Cat-Bed-Self-Warming-for-Indoor-Cats-Dog-House-with-Removable-Mattress-Puppy-Cage-Lounger__48728.1565598870.jpg?c=2&imbypass=on"
             }
 
     };
