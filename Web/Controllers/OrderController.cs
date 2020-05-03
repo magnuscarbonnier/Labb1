@@ -37,8 +37,7 @@ namespace Web.Controllers
             if (order != null || cart != null)
             {
                 order.OrderItems = cart.CartItems;
-                message = _orderService.AddOrder(userId, order, HttpContext.Session);
-                TempData["Success"] = message;                
+                message = _orderService.AddOrder(userId, order, HttpContext.Session);               
             }
             else
             {

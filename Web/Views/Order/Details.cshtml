@@ -71,43 +71,21 @@
         </dd>
     </dl>
 </div>
-<div class="col-sm-12 col-md-8">
-    <h3>Dina varor:</h3>
-    <table class="table table-striped table-dark table-responsive-sm">
-        <thead>
-            <tr>
-                <th>
-                    @Html.DisplayNameFor(model => new Item().Product.Name)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => new Item().Product.Price)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => new Item().Quantity)
-                </th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model.OrderItems)
-            {
-                <tr>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Product.Name)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Product.Price)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Quantity)
-                    </td>
-                </tr>
-            }
-
-        </tbody>
-    </table>
-    <hr />
-    <h4 class="font-weight-bold m-3">
-       Totalpris: @Model.Total()
-    </h4>
-    <a class="btn btn-outline-secondary" asp-area="Identity" asp-page="/Account/Manage/YourOrders">Visa dina ordrar</a>
+<div class="row">
+    @foreach (var item in Model.OrderItems)
+    {
+        <div class="col-sm-12 bg-light col-md-5 border-secondary m-2 box-shadow">
+            <div>Produktnamn: @item.Product.Name</div>
+            <div>Beskrivning: @item.Product.Description</div>
+            <div>
+                Antal: @item.Quantity
+            </div>
+            <div>Pris: @item.Product.Price.ToString("C")</div>
+        </div>
+    }
 </div>
+<div class="row">
+    <h4 class="col-sm-12 m-2">Totalt: @Model.Total().ToString("C")</h4>
+</div>
+<a class="btn btn-outline-secondary" asp-area="Identity" asp-page="/Account/Manage/YourOrders">Visa dina ordrar</a>
+
