@@ -18,9 +18,11 @@ namespace Web.Controllers
         private readonly IProductService _productService;
         private readonly UserManager<ApplicationUser> _userManager;
         private ICartService _cartService;
+        private IOrderService _orderService;
 
-        public CartController(IProductService productService, UserManager<ApplicationUser> userManager, ICartService cartService)
+        public CartController(IProductService productService, UserManager<ApplicationUser> userManager, ICartService cartService, IOrderService orderService)
         {
+            _orderService = orderService;
             _productService = productService;
             _userManager = userManager;
             _cartService = cartService;
@@ -35,33 +37,32 @@ namespace Web.Controllers
 
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> PlaceOrder()
+        public async Task<IActionResult> AddOrder()
         {
             var user = await _userManager.GetUserAsync(User);
+         
             var cart = _cartService.GetCart(user.Id, HttpContext.Session);
             if(cart==null)
             {
                 TempData["Error"] = "Lägg till varor i kundvagnen och försök igen...";
                 return RedirectToAction("Index","Home");
             }
-            var total = cart.Total();
-            Order order = new Order 
-            { 
-                UserId=user.Id, 
-                OrderItems= cart, 
-                TotalPrice=total, 
-                Email=user.Email, 
-                FirstName=user.FirstName, 
-                LastName=user.LastName, 
-                Address=user.Address,
-                ZipCode=user.ZipCode,
-                City=user.City,
-                Phone=user.PhoneNumber,
-                OrderDate=DateTime.Now, 
-                Status=Lib.Status.Beställd
+
+            Order order = new Order
+            {
+                UserId = user.Id,
+                OrderItems = cart.CartItems,
+                Email = user.Email,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Address = user.Address,
+                ZipCode = user.ZipCode,
+                City = user.City,
+                Phone = user.PhoneNumber
             };
 
-            HttpContext.Session.Set<Order>(Lib.SessionKeyOrder, order);
+            var message = _orderService.AddOrder(user.Id, order, HttpContext.Session);
+            TempData["Success"] = message;
             return RedirectToAction("Index", "Order");
         }
         [Authorize]

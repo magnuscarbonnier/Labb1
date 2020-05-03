@@ -12,11 +12,14 @@ namespace Web
 {
     public class Lib
     {
+        //session
         public const string SessionKeyCart = "_ShoppingCart";
         public const string SessionKeyTotalPrice = "_ShoppingTotalPrice";
         public const string SessionKeyOrder = "_ShoppingOrder";
         public const string SessionKeyOrderList = "_OrderList";
         public const string SessionKeyUserId = "_UserId";
+
+        //status
         public enum Status { Beställd = 0, Bekräftad = 1, Packas = 2, Skickad = 3, Avbeställd = 4 }
 
         //cart
@@ -25,6 +28,11 @@ namespace Web
         public const string CartAdd = "Varan lades till i varukorgen";
         public const string CartRemove = "Varan togs bort från varukorgen";
         public const string CartRemoveOne = "Minskade antal med 1 från varan.";
+
+        //order
+        public const string OrderAdd = "Order lades till.";
+        public const string OrderNotAdded = "Order kunde inte läggas till.";
+        public const string OrderNotGet = "Order kunde inte hämtas";
     }
 }
 

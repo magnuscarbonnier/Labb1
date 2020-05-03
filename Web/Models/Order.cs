@@ -45,17 +45,20 @@ namespace Web.Models
         [Display(Name = "Telefon")]
         public string Phone { get; set; }
 
-        [Required]
-        [Display(Name = "Totalpris")]
-        public decimal TotalPrice { get; set; }
-
         public Status Status { get; set; }
 
-        public Cart OrderItems { get; set; }
+        public List<Item> OrderItems { get; set; }
+
+        public decimal Total()
+        {
+            return OrderItems.Sum(x => x.Product.Price * x.Quantity);
+        }
+
 
         public Order()
         {
             Id = Guid.NewGuid();
+            OrderItems = new List<Item>();
         } 
     }
 }
