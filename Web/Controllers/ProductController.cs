@@ -17,11 +17,13 @@ namespace Web.Controllers
     {
         private readonly IProductService _productService;
         private readonly UserManager<ApplicationUser> _userManager;
+        private ICartService _cartService;
 
-        public ProductController(IProductService productService, UserManager<ApplicationUser> userManager)
+        public ProductController(IProductService productService, UserManager<ApplicationUser> userManager, ICartService cartService)
         {
             _productService = productService;
             _userManager = userManager;
+            _cartService = cartService;
         }
 
         public IActionResult Index()
@@ -34,37 +36,15 @@ namespace Web.Controllers
 
         public IActionResult AddToCart(Guid Id)
         {
-            HttpContext.Session.CheckUserId(HttpContext, _userManager);
-           
             var product = _productService.GetById(Id);
-            if(product == null)
-            {
-                return RedirectToAction("index");
-            }
+            var userId = _userManager.GetUserId(User);
+            var message = _cartService.AddItemToCart(userId, product, HttpContext.Session);
             
-            var items=HttpContext.Session.Get<List<Item>>(Lib.SessionKeyCart);
-
-            if (items != null)
-            {
-                if (items.Any(s => s.Product.Id == Id))
-                {
-                        int itemIndex = items.FindIndex(x => x.Product.Id==Id);
-                        items[itemIndex].Quantity += 1;
-                }
-                else
-                {
-                    items.Add(new Item() { Quantity = 1, Product = product });
-                }  
-            }
+            if (message == Lib.CartNotUpdated)
+                TempData["Error"] = message;
             else
-            {
-                items = new List<Item>() { new Item { Product = product, Quantity = 1 } };
-            }
-            var totalPrice = items.Sum(x => x.Product.Price * x.Quantity);
-            HttpContext.Session.Set<decimal>(Lib.SessionKeyTotalPrice, totalPrice);
-            HttpContext.Session.Set<List<Item>>(Lib.SessionKeyCart, items);
+                TempData["Success"] = message;
 
-            TempData["Success"] = $"{product.Name} tillagd i varukorgen.";
             return RedirectToAction("index");
         }
     }

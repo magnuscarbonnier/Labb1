@@ -51,12 +51,11 @@ namespace Web.Models
 
         public Status Status { get; set; }
 
-        public List<Item> OrderItems { get; set; }
+        public Cart OrderItems { get; set; }
 
         public Order()
         {
             Id = Guid.NewGuid();
-            OrderItems = new List<Item>();
         } 
     }
 }
