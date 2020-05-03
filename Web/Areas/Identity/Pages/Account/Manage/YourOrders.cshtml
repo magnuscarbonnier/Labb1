@@ -3,56 +3,38 @@
 @{
     ViewData["Title"] = "Dina ordrar";
 }
-@if(!Model.Orders.Any())
+<a class="btn-sm btn-outline-secondary" href="##" onClick="history.go(-1); return false;">Gå tillbaka</a>
+@if (!Model.Orders.Any())
 {
     <h4>Du har inga ordrar</h4>
 }
+
 @foreach (var order in Model.Orders)
 {
 
-    <div class="col-sm-12 col-md-8 bg-dark text-white m-2">
-        <h4>
+    <div class="col-sm-12 col-md-8 m-2 bg-dark text-white box-shadow">
+        <h5>
             OrderId: @order.Id
-        </h4>
-        <p>Orderdatum: @order.OrderDate</p>
-        <p>Status: @order.Status</p>
-        <p>Totalpris: @order.Total()</p>
-        <div>
-            <h3>Beställda varor:</h3>
-            <table class="table table-striped table-dark table-responsive-sm">
-                <thead>
-                    <tr>
-                        <th>
-                            @Html.DisplayNameFor(model => new Item().Product.Name)
-                        </th>
-                        <th>
-                            @Html.DisplayNameFor(model => new Item().Product.Price)
-                        </th>
-                        <th>
-                            @Html.DisplayNameFor(model => new Item().Quantity)
-                        </th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var item in order.OrderItems)
-                    {
-                        <tr>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.Product.Name)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.Product.Price)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.Quantity)
-                            </td>
-                        </tr>
-                    }
-
-                </tbody>
-            </table>
-
+        </h5>
+        <div>Orderdatum: @order.OrderDate</div>
+        <div>Status: @order.Status</div>
+        <div>Totalpris: @order.Total().ToString("C")</div>
+        <h3>Beställda varor:</h3>
+        <div class="row">
+            @foreach (var item in order.OrderItems)
+            {
+            <div class="col-sm-12 col-md-8 m-2 bg-light text-dark border-secondary box-shadow">
+                <div>
+                    Namn: @Html.DisplayFor(modelItem => item.Product.Name)
+                </div>
+                <div>
+                    Antal: @Html.DisplayFor(modelItem => item.Quantity)
+                </div>
+                <div>
+                    Pris: @item.Product.Price.ToString("C")
+                </div>
+            </div>
+            }
         </div>
     </div>
-<hr />
 }

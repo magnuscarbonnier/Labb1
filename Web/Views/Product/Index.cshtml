@@ -3,7 +3,7 @@
 @{
     ViewData["Title"] = "Produkter";
 }
-
+    <a class="btn-sm btn-outline-secondary" href="##" onClick="history.go(-1); return false;">Gå tillbaka</a>
 <h1>Produkter</h1>
 <div class="container">
     @if(!User.Identity.IsAuthenticated)
@@ -32,25 +32,3 @@
         </div>
     }
 </div>
-
-@*<div class="row d-flex flex-row justify-content-around flex-wrap">
-        @foreach (var item in Model.Products)
-        {
-            @Html.HiddenFor(x => item.Id)
-            <div class="card flex-grow-0 flex-shrink-1 m-2" style="flex-basis: 300px">
-                <img src="@item.ImgSrc" alt="@item.Name" class="card-img-top" />
-                <div class="card-body">
-                    <h3 class="card-title">@item.Name</h3>
-                    <p class="card-text">@item.Description</p>
-                    <p>
-                        @item.Price.ToString("C");
-                    </p>
-                        @if (User.Identity.IsAuthenticated)
-                        {
-                            <p>@Html.ActionLink("Lägg till i varukorg", "AddToCart", "Product", new { Id = item.Id }, new { @class = "btn btn-secondary" })</p>
-                        }
-
-                </div>
-            </div>
-        }
-    </div>*@

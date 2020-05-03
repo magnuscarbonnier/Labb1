@@ -45,7 +45,7 @@ namespace Web.Controllers
             else
                 TempData["Success"] = message;
 
-            return RedirectToAction("index");
+            return RedirectToAction("index","Cart");
         }
     }
 }
