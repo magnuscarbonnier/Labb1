@@ -16,7 +16,7 @@
         </h4>
         <p>Orderdatum: @order.OrderDate</p>
         <p>Status: @order.Status</p>
-        <p>Totalpris: @order.TotalPrice</p>
+        <p>Totalpris: @order.Total()</p>
         <div>
             <h3>Beställda varor:</h3>
             <table class="table table-striped table-dark table-responsive-sm">
@@ -34,7 +34,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var item in order.OrderItems.CartItems)
+                    @foreach (var item in order.OrderItems)
                     {
                         <tr>
                             <td>

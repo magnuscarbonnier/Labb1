@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.VisualStudio.Web.CodeGeneration.Contracts.Messaging;
 using Web.Models;
 using Web.Services;
 using Web.ViewModels;
@@ -15,38 +16,50 @@ namespace Web.Controllers
     {
         private readonly IProductService _productService;
         private readonly UserManager<ApplicationUser> _userManager;
+        private IOrderService _orderService;
+        private readonly ICartService _cartService;
 
-        public OrderController(IProductService productService, UserManager<ApplicationUser> userManager)
+        public OrderController(IProductService productService, UserManager<ApplicationUser> userManager, IOrderService orderService, ICartService cartService)
         {
             _productService = productService;
             _userManager = userManager;
+            _orderService = orderService;
+            _cartService = cartService;
         }
         [Authorize]
         public IActionResult Index()
         {
-            //HttpContext.Session.CheckUserId(HttpContext, _userManager);
-            var order = HttpContext.Session.Get<Order>(Lib.SessionKeyOrder);
-            if (order == null)
+            var userId = _userManager.GetUserId(User);
+            var order = _orderService.GetOrder(userId, HttpContext.Session);
+            var cart = _cartService.GetCart(userId, HttpContext.Session);
+            var message = Lib.OrderNotAdded;
+            
+            if (order != null || cart != null)
             {
-                TempData["Error"] = "Finns ingen aktiv order...";
-                return RedirectToAction("Index", "Home");
+                order.OrderItems = cart.CartItems;
+                message = _orderService.AddOrder(userId, order, HttpContext.Session);
+                TempData["Success"] = message;                
             }
-            else if(!order.OrderItems.CartItems.Any())
+            else
             {
-                TempData["Error"]="Du har inga varor i din order. Lägg till varor och försök igen";
+                TempData["Error"] = message;
                 return RedirectToAction("Index", "Product");
             }
-            
-            
-
             return View(order);
         }
         [Authorize]
         public IActionResult Details()
         {
-            var order = HttpContext.Session.Get<Order>(Lib.SessionKeyOrder);
-            
-                return View(order);
+            var userId = _userManager.GetUserId(User);
+            var order = _orderService.GetOrder(userId, HttpContext.Session);
+
+            if (order == null)
+            {
+                TempData["Error"] = Lib.OrderNotGet;
+                return RedirectToAction("Index", "Product");
+            }
+
+            return View(order);
         }
         [HttpPost]
         [Authorize]
@@ -54,142 +67,66 @@ namespace Web.Controllers
         {
             if (!ModelState.IsValid)
                 return View(order);
-            HttpContext.Session.CheckUserId(HttpContext, _userManager);
-            var sessionUser = HttpContext.Session.Get<string>(Lib.SessionKeyUserId);
-            var cart = HttpContext.Session.Get<Cart>(Lib.SessionKeyCart);
-            
-            if (order.UserId == sessionUser)
+            var userId = _userManager.GetUserId(User);
+            var message = Lib.OrderNotAdded;
+            var cart = _cartService.GetCart(userId, HttpContext.Session);
+            if (order != null && order.UserId == userId && cart.CartItems.Count>0)
             {
-                var orderList = HttpContext.Session.Get<List<Order>>(Lib.SessionKeyOrderList);
-                if (orderList == null)
-                {
-                    orderList = new List<Order>();
-                }
-                order.OrderItems = cart;
-                orderList.Add(order);
-                //Spara order till databasen istället
-                HttpContext.Session.Set<Order>(Lib.SessionKeyOrder, order);
-                //Töm kundvagn
+                order.OrderItems = cart.CartItems;
+                message = _orderService.PlaceOrder(userId, order, HttpContext.Session);
+                //empty cart
                 HttpContext.Session.Remove(Lib.SessionKeyCart);
-                //Spara till lista av ordrar
-                HttpContext.Session.Set<List<Order>>(Lib.SessionKeyOrderList, orderList);
+            }
+
+            if (message != Lib.OrderNotAdded)
+            {
+                TempData["Success"] = message;
                 return RedirectToAction("Details", "Order");
             }
-            TempData["Error"] = "Finns ingen aktiv order...";
-            return RedirectToAction("Index", "Home");
+            else
+            {
+                TempData["Error"] = message;
+                return RedirectToAction("Index", "Cart");
+            }
+            
         }
         [Authorize]
         public IActionResult Remove(Guid Id)
         {
-            HttpContext.Session.CheckUserId(HttpContext, _userManager);
-            var sessionUser = HttpContext.Session.Get<string>(Lib.SessionKeyUserId);
-           
-            var order = HttpContext.Session.Get<Order>(Lib.SessionKeyOrder);
-           
-
+            var userid = _userManager.GetUserId(User);
             var product = _productService.GetById(Id);
-            if (product == null)
-            {
-                TempData["Error"] = "Finns ingen produkt med id "+Id;
-                return RedirectToAction("Index", "Order");
-            }
-
-            if (order != null && order.OrderItems.CartItems.Any(s => s.Product.Id == Id))
-            {
-
-                int itemIndex = order.OrderItems.CartItems.FindIndex(x => x.Product.Id == Id);
-                order.OrderItems.CartItems.RemoveAt(itemIndex);
-
-            }
-
-            order.TotalPrice = order.OrderItems.Total();
-            HttpContext.Session.Set<decimal>(Lib.SessionKeyTotalPrice, order.TotalPrice);
-            HttpContext.Session.Set<Cart>(Lib.SessionKeyCart, order.OrderItems);
-            HttpContext.Session.Set<Order>(Lib.SessionKeyOrder, order);
-
-
-            return RedirectToAction("Index");
+            var message = _cartService.RemoveItem(userid, product, HttpContext.Session);
+            if (message == Lib.CartNotUpdated)
+                TempData["Error"] = message;
+            else
+                TempData["Success"] = message;
+            return RedirectToAction("index");
         }
+
+
         [Authorize]
         public IActionResult Increase(Guid Id)
         {
-            HttpContext.Session.CheckUserId(HttpContext, _userManager);
-            var sessionUser = HttpContext.Session.Get<string>(Lib.SessionKeyUserId);
-            
-            var order = HttpContext.Session.Get<Order>(Lib.SessionKeyOrder);
-           
-
+            var userid = _userManager.GetUserId(User);
             var product = _productService.GetById(Id);
-            if (product == null)
-            {
-                TempData["Error"] = "Finns ingen produkt med id " + Id;
-                return RedirectToAction("Index", "Order");
-            }
-
-            
-            if (order.OrderItems != null)
-            {
-                if (order.OrderItems.CartItems.Any(s => s.Product.Id == Id))
-                {
-                    int itemIndex = order.OrderItems.CartItems.FindIndex(x => x.Product.Id == Id);
-                    order.OrderItems.CartItems[itemIndex].Quantity += 1;
-                }
-            }
-
-            order.TotalPrice = order.OrderItems.Total();
-            HttpContext.Session.Set<decimal>(Lib.SessionKeyTotalPrice, order.TotalPrice);
-            HttpContext.Session.Set<Cart>(Lib.SessionKeyCart, order.OrderItems);
-
-            HttpContext.Session.Set<Order>(Lib.SessionKeyOrder, order);
-
-
-            return RedirectToAction("Index", "Order");
+            var message = _cartService.AddOneItem(userid, product, HttpContext.Session);
+            if (message == Lib.CartNotUpdated)
+                TempData["Error"] = message;
+            else
+                TempData["Success"] = message;
+            return RedirectToAction("index");
         }
         [Authorize]
         public IActionResult Decrease(Guid Id)
         {
-            HttpContext.Session.CheckUserId(HttpContext, _userManager);
-            var sessionUser = HttpContext.Session.Get<string>(Lib.SessionKeyUserId);
-            
-            var order = HttpContext.Session.Get<Order>(Lib.SessionKeyOrder);
-            
-
+            var userid = _userManager.GetUserId(User);
             var product = _productService.GetById(Id);
-            if (product == null)
-            {
-                TempData["Error"] = "Finns ingen produkt med id " + Id;
-                return RedirectToAction("Index", "Order");
-            }
-
-            
-
-            if (order.OrderItems != null && order.OrderItems.CartItems.Any(s => s.Product.Id == Id))
-            {
-                int itemIndex = order.OrderItems.CartItems.FindIndex(x => x.Product.Id == Id);
-                var itemQ = order.OrderItems.CartItems[itemIndex].Quantity;
-                if (itemQ == 1)
-                {
-                    order.OrderItems.CartItems.RemoveAt(itemIndex);
-
-                }
-                else
-                {
-                    order.OrderItems.CartItems[itemIndex].Quantity--;
-
-                }
-
-            }
+            var message = _cartService.RemoveOneItem(userid, product, HttpContext.Session);
+            if (message == Lib.CartNotUpdated)
+                TempData["Error"] = message;
             else
-            {
-                TempData["Error"] = "Fanns inte i varukorgen. Försök igen";
-            }
-            order.TotalPrice = order.OrderItems.Total();
-            HttpContext.Session.Set<decimal>(Lib.SessionKeyTotalPrice, order.TotalPrice);
-            HttpContext.Session.Set<List<Item>>(Lib.SessionKeyCart, order.OrderItems.CartItems);
-            HttpContext.Session.Set<Order>(Lib.SessionKeyOrder, order);
-
-
-            return RedirectToAction("Index");
+                TempData["Success"] = message;
+            return RedirectToAction("index");
         }
     }
 }
