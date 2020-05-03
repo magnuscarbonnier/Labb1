@@ -13,12 +13,12 @@ namespace Web.Areas.Identity.Pages.Account.Manage
 {
     public class YourOrders : PageModel
     {
-        private readonly IProductService _productService;
+        private readonly IOrderService _orderService;
         private readonly UserManager<ApplicationUser> _userManager;
 
-        public YourOrders(IProductService productService, UserManager<ApplicationUser> userManager)
+        public YourOrders(IOrderService orderService, UserManager<ApplicationUser> userManager)
         {
-            _productService = productService;
+            _orderService = orderService;
             _userManager = userManager;
         }
         
@@ -26,11 +26,12 @@ namespace Web.Areas.Identity.Pages.Account.Manage
         public List<Order> Orders = new List<Order>();
         public void OnGet()
         {
-            HttpContext.Session.CheckUserId(HttpContext, _userManager);
-            var orderresponse = HttpContext.Session.Get<List<Order>>(Lib.SessionKeyOrderList);
-        if(orderresponse!=null)
+            var userId = _userManager.GetUserId(User);
+            var orders = _orderService.GetOrders(userId, HttpContext.Session);
+            
+        if(orders!=null)
             {
-                Orders = orderresponse;
+                Orders = orders;
             }
         }
     }

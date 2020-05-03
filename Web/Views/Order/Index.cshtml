@@ -25,7 +25,6 @@
                         @Html.HiddenFor(x => x.OrderDate)
                         @Html.HiddenFor(x => x.Status)
                         @Html.HiddenFor(x => x.UserId)
-                        @Html.HiddenFor(x => x.TotalPrice)
                         @Html.HiddenFor(x => x.Email)
 
                         <div class="form-group">
@@ -58,7 +57,6 @@
                             <input asp-for="Phone" value="@Model.Phone" class="form-control" />
                             <span asp-validation-for="Phone" class="text-danger"></span>
                         </div>
-
                         <div class="form-group">
                             <input type="submit" value="Skicka beställning" class="btn btn-primary" />
                         </div>
@@ -105,8 +103,7 @@
         </table> 
         <hr />
         <h4 class="font-weight-bold m-3">
-            @Html.LabelFor(modelItem => modelItem.TotalPrice):
-            @Html.DisplayFor(modelItem => modelItem.TotalPrice)
+            Totalpris: @Model.Total()
         </h4>
     </div>
 </div>
