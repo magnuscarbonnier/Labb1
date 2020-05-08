@@ -15,6 +15,7 @@ using Microsoft.Extensions.Hosting;
 using Web.Models;
 using Web.Services;
 using Microsoft.AspNetCore.Http;
+using System.Globalization;
 
 namespace Web
 {
@@ -74,8 +75,13 @@ namespace Web
             app.UseCookiePolicy();//added
             app.UseRouting();
 
+
             app.UseAuthentication();
             app.UseAuthorization();
+
+            var cultureinfo = new CultureInfo("sv-SE");
+            CultureInfo.DefaultThreadCurrentCulture=cultureinfo;
+            CultureInfo.DefaultThreadCurrentUICulture = cultureinfo;
 
             app.UseEndpoints(endpoints =>
             {
