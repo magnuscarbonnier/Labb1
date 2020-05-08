@@ -26,6 +26,7 @@ namespace Web.Controllers
             _orderService = orderService;
             _cartService = cartService;
         }
+
         [Authorize]
         public IActionResult Index()
         {
@@ -46,6 +47,7 @@ namespace Web.Controllers
             }
             return View(order);
         }
+
         [Authorize]
         public IActionResult Details()
         {
@@ -60,6 +62,7 @@ namespace Web.Controllers
 
             return View(order);
         }
+
         [HttpPost]
         [Authorize]
         public IActionResult Index(Order order)
@@ -75,20 +78,17 @@ namespace Web.Controllers
                 message = _orderService.PlaceOrder(userId, order, HttpContext.Session);
                 //empty cart
                 HttpContext.Session.Remove(Lib.SessionKeyCart);
-            }
-
-            if (message != Lib.OrderNotAdded)
-            {
-                TempData["Success"] = message;
                 return RedirectToAction("Details", "Order");
             }
-            else
+
+            if (message == Lib.OrderNotAdded)
             {
                 TempData["Error"] = message;
-                return RedirectToAction("Index", "Cart");
             }
             
+                return RedirectToAction("Index", "Cart");            
         }
+
         [Authorize]
         public IActionResult Remove(Guid Id)
         {
@@ -97,11 +97,9 @@ namespace Web.Controllers
             var message = _cartService.RemoveItem(userid, product, HttpContext.Session);
             if (message == Lib.CartNotUpdated)
                 TempData["Error"] = message;
-            else
-                TempData["Success"] = message;
+             
             return RedirectToAction("index");
         }
-
 
         [Authorize]
         public IActionResult Increase(Guid Id)
@@ -111,10 +109,10 @@ namespace Web.Controllers
             var message = _cartService.AddOneItem(userid, product, HttpContext.Session);
             if (message == Lib.CartNotUpdated)
                 TempData["Error"] = message;
-            else
-                TempData["Success"] = message;
+             
             return RedirectToAction("index");
         }
+
         [Authorize]
         public IActionResult Decrease(Guid Id)
         {
@@ -123,8 +121,7 @@ namespace Web.Controllers
             var message = _cartService.RemoveOneItem(userid, product, HttpContext.Session);
             if (message == Lib.CartNotUpdated)
                 TempData["Error"] = message;
-            else
-                TempData["Success"] = message;
+             
             return RedirectToAction("index");
         }
     }

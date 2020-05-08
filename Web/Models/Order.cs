@@ -26,6 +26,7 @@ namespace Web.Models
         [Required]
         [Display(Name = "Efternamn")]
         public string LastName { get; set; }
+
         [Required]
         [Display(Name = "Adress")]
         public string Address { get; set; }
@@ -49,16 +50,15 @@ namespace Web.Models
 
         public List<Item> OrderItems { get; set; }
 
+        [Display(Name = "Totalpris")]
         public decimal Total()
         {
             return OrderItems.Sum(x => x.Product.Price * x.Quantity);
         }
 
-
         public Order()
         {
             Id = Guid.NewGuid();
-            OrderItems = new List<Item>();
         } 
     }
 }
