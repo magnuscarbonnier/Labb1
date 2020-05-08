@@ -1,6 +1,6 @@
 ﻿@model Web.Models.Product
     <div class="m-md-4">
-        <form asp-controller="Product" asp-route-id="@Model.Id" asp-action="AddToCart">
+       @* <form asp-controller="Product" asp-route-id="@Model.Id" asp-action="AddToCart">*@
             @Html.HiddenFor(c => c.Id)
 
             <div class="card flex-grow-0 flex-shrink-1 box-shadow rounded text-center" style="flex-basis: 250;">
@@ -11,14 +11,11 @@
                     <p>@Model.Price.ToString("C")</p>
                     @if (User.Identity.IsAuthenticated)
                     {
-                        <input class="btn btn-secondary" type="submit" value="Lägg till i kundvagn" />
-                    }
-                    else
-                    {
-               
+                        <button class="btn btn-secondary" onclick="AddToCart('@Model.Id')">Lägg till i kundvagn</button>
+                        <span id=@Model.Id></span>
                     }
                 </div>
             </div>
 
-        </form>
+       @* </form>*@
     </div>

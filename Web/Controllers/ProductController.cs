@@ -39,13 +39,11 @@ namespace Web.Controllers
             var product = _productService.GetById(Id);
             var userId = _userManager.GetUserId(User);
             var message = _cartService.AddItemToCart(userId, product, HttpContext.Session);
-            
+
             if (message == Lib.CartNotUpdated)
                 TempData["Error"] = message;
-            else
-                TempData["Success"] = message;
 
-            return RedirectToAction("index","Cart");
+            return RedirectToAction("index", "Cart");
         }
     }
 }

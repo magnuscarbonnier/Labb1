@@ -62,10 +62,11 @@ namespace Web.Controllers
             };
 
             var message = _orderService.AddOrder(user.Id, order, HttpContext.Session);
-            TempData["Success"] = message;
+            if(message==Lib.OrderNotAdded)
+            TempData["Error"] = message;
             return RedirectToAction("Index", "Order");
         }
-        [Authorize]
+
         public IActionResult Remove(Guid Id)
         {
             var userid = _userManager.GetUserId(User);
@@ -73,13 +74,10 @@ namespace Web.Controllers
             var message = _cartService.RemoveItem(userid, product, HttpContext.Session);
             if (message == Lib.CartNotUpdated)
                 TempData["Error"] = message;
-            else
-                TempData["Success"] = message;
+             
             return RedirectToAction("index");
         }
 
-
-        [Authorize]
         public IActionResult Increase(Guid Id)
         {
             var userid = _userManager.GetUserId(User);
@@ -87,11 +85,10 @@ namespace Web.Controllers
             var message = _cartService.AddOneItem(userid, product, HttpContext.Session);
             if (message == Lib.CartNotUpdated)
                 TempData["Error"] = message;
-            else
-                TempData["Success"] = message;
+             
             return RedirectToAction("index");
         }
-        [Authorize]
+        
         public IActionResult Decrease(Guid Id)
         {
             var userid = _userManager.GetUserId(User);
@@ -99,9 +96,15 @@ namespace Web.Controllers
             var message = _cartService.RemoveOneItem(userid, product, HttpContext.Session);
             if (message == Lib.CartNotUpdated)
                 TempData["Error"] = message;
-            else
-                TempData["Success"] = message;
+             
             return RedirectToAction("index");
+        }
+        public JsonResult GetCartAmount()
+        {
+            var userId = _userManager.GetUserId(User);
+            var cart = _cartService.GetCart(userId, HttpContext.Session);
+            var totalitems = cart.CartItems.Sum(x => x.Quantity);
+            return new JsonResult(totalitems);
         }
     }
 }
