@@ -22,6 +22,12 @@ function AddToCart(productId) {
 
         success: function (result) {
             GetCartAmount();
+            ShowAddMessage(productId);
         }
     });
+}
+
+function ShowAddMessage(productId) {
+    var element = document.getElementById(productId);
+    element.innerHTML = ' <i class="fas fa-cart-arrow-down text-success"></i>';
 }
