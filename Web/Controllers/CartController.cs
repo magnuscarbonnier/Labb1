@@ -40,7 +40,7 @@ namespace Web.Controllers
         public async Task<IActionResult> AddOrder()
         {
             var user = await _userManager.GetUserAsync(User);
-         
+        
             var cart = _cartService.GetCart(user.Id, HttpContext.Session);
             if(cart==null)
             {

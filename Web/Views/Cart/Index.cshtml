@@ -4,7 +4,6 @@
 }
 <a class="btn-sm btn-outline-secondary" href="##" onClick="history.go(-1); return false;">Gå tillbaka</a>
 <h1>Kundvagn</h1>
-<div>@Model.CartUserId</div>
 @if (Model != null)
 {
     @if (!Model.CartItems.Any() && !User.Identity.IsAuthenticated)
